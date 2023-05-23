@@ -70,10 +70,13 @@ declare namespace API {
   };
 
   interface UserInfo {
-    Name?: string;
-    Email?: string;
-    Phone?: string;
-    Address?: string;
+    username: string;
+    token: string;
+    status: number;
+    email: string;
+    nickname?: string;
+    birthday?: string;
+    gender?: string;
   }
 
   interface LoginData {

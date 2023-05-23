@@ -32,7 +32,7 @@ function RouteAuthLoading() {
   return (
     <Row justify="center" align="middle" style={{ height: '100%' }}>
       <Col>
-        <Spin tip="用户认证中..." />
+        <Spin tip="Loading..." />
       </Col>
     </Row>
   );

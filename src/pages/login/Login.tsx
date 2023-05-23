@@ -3,13 +3,14 @@ import { Space, Form, theme } from 'antd';
 import type { FormItemProps } from 'antd';
 import { useAppDispatch } from '@/hooks/useAppHooks';
 import { message } from '@/hooks/useGlobalTips';
-import { login } from '@/store/reducer/userSlice';
+import { fetchUserMenu, login } from '@/store/reducer/userSlice';
 import styles from './login.module.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import classnames from 'classnames';
 import Icon from '@/components/Icons';
 import { LoginForm } from '@ant-design/pro-components';
 import LoginLogo from './LoginLogo';
+
 
 const FormItem = Form.Item;
 const { useToken } = theme;
@@ -38,33 +39,52 @@ export default function Login() {
   const prev_page_location = location.state as typeof location;
   const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    initUserInfo(navigate);
+  }, []);
+
   const onFinish: (formData: any) => Promise<boolean | void> = async (
     values
   ) => {
-    await dispatch(
-      login({ username: values.username, password: values.password })
-    ).unwrap(); // return originalPromiseResult
-    message.success('登录成功');
+    try {
+      await dispatch(
+        login({ username: values.username, password: values.password })
+      ).unwrap(); // return originalPromiseResult
+      message.success('登录成功');
+    } catch (error) {
+      console.error("Error during login:", error);
+      return;
+    }
+
+    try {
+      // 获取用户菜单
+      await dispatch(fetchUserMenu()).unwrap();
+    } catch (error) {
+      console.error("Error fetching user menu:", error);
+      return;
+    }
+
     navigate(
       prev_page_location
         ? prev_page_location.pathname + prev_page_location.search
-        : '/'
+        : '/system/user'
     );
   };
+
   return (
     <LoginContainer>
       <div>
         <LoginForm
           title={<LoginLogo />}
           subTitle={
-            <span className={styles.subtitle}>中后台管理系统通用模板</span>
+            <span className={styles.subtitle}>在线客服管理系统</span>
           }
           initialValues={{
-            username: 'admin',
-            password: '123456'
+            username: 'dragonmax',
+            password: '12345'
           }}
           onFinish={onFinish}
-          actions={<Actions />}
+
         >
           <UserName name="username" />
           <Password name="password" />

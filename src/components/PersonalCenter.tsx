@@ -5,7 +5,7 @@ import { persistor } from '@/store';
 import { selectUserInfo } from '@/store/reducer/userSlice';
 import { useAppSelector } from '@/hooks/useAppHooks';
 import { useNavigate } from 'react-router-dom';
-
+import ErrorAvatar from '@/assets/images/avatar.jpg'
 const enum PersonalCenterMenuKeys {
   MyInfo = 'MYINFO',
   ModifyPassword = 'MODIFYPASSWORD',
@@ -65,9 +65,9 @@ export default function PersonalCenterEntry() {
         }}
       >
         <Col>
-          <Avatar size="default" icon={<Icon type="UserOutlined" />} />
+          <Avatar size="default" src={ErrorAvatar} />
         </Col>
-        <Col>{userInfo.Name || 'Admin'}</Col>
+        <Col>{userInfo.nickname || 'Admin'}</Col>
       </Row>
     </Dropdown>
   );

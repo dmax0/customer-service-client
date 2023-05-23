@@ -20,10 +20,19 @@ import counterReducer from './reducer/counterSlice';
 import userSlice from './reducer/userSlice';
 import layoutSlice from './reducer/layoutSlice';
 import loadingReducer from './reducer/loadingSlice';
-
+import roleSlice from './reducer/roleSlice';
+import teamSlice from './reducer/teamSlice';
 const rootReducer = combineReducers({
   loading: loadingReducer,
   counter: counterReducer,
+  team: persistReducer(
+    {
+      key: 'team',
+      storage,
+      blacklist: ['status']
+    },
+    teamSlice
+  ),
   user: persistReducer(
     {
       key: 'user',
@@ -38,6 +47,13 @@ const rootReducer = combineReducers({
       storage
     },
     layoutSlice
+  ),
+  role: persistReducer(
+    {
+      key: 'role',
+      storage
+    },
+    roleSlice
   )
 });
 

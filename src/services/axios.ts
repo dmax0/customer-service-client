@@ -6,13 +6,23 @@ import { store, persistor } from '@/store';
 import { message } from '@/hooks/useGlobalTips';
 import { downloadStreamFile } from '@/utils/utils';
 
-type HttpStatusCode = keyof typeof localConfig.api.status;
+type HttpStatusCode = keyof typeof localConfig.api.status; // 服务端自定义的一套状态码 config.ts
 
-export interface DTO<ResDataType = any> {
-  Code: HttpStatusCode;
-  Data: ResDataType;
-  Message: string | undefined;
-  Success: boolean;
+/**
+ * ResponseDto: Data Transfer Object
+ * 用于接口返回数据的类型约束
+ * @interface ResponseDto 通用接口返回数据类型
+ * @template ResDataType
+ * @property {HttpStatusCode} code 服务端自定义的一套状态码 
+ * @property {ResDataType} data 服务端返回的数据
+ * @property {string} message 服务端返回的消息
+ * @property {boolean} success 服务端返回的请求是否成功
+ */   
+export interface ResponseDto<ResDataType = any> {
+  code: HttpStatusCode;
+  data: ResDataType;
+  message: string | undefined;
+  success: boolean;
 }
 
 class Request {
@@ -29,7 +39,10 @@ class Request {
     // 请求拦截器
     this.instance.interceptors.request.use(
       (config) => {
-        const token = selectToken(store.getState());
+        
+        // const token = selectToken(store.getState()); // 从redux中获取token
+        // console.log("token", token)
+        const token = localStorage.getItem('Authorization');
         if (token) {
           config.headers![localConfig.api.sessionKey] = token;
         }
@@ -41,17 +54,17 @@ class Request {
     );
     // 响应拦截器
     this.instance.interceptors.response.use(
-      (response: AxiosResponse<DTO>) => {
+      (response: AxiosResponse<ResponseDto>) => {
         const { headers, data } = response;
-        if (headers['content-type']?.includes('application/json')) {
-          // 服务端自定义的一套状态码，并不是真实的http状态码，如果处理http状态码错误，请至下面error错误函数中修改
-          if (data.Code !== 200) {
+        if (headers['content-type']?.includes('application/json')) { 
+
+          if (data.code !== 200) {
             const errorText =
-              data.Message ||
-              localConfig.api.status[data.Code as HttpStatusCode] ||
-              'HTTP响应错误';
-            data.Code === 401 && persistor.purge(); // 退出登录
-            message.error(errorText);
+              data.message ||
+              localConfig.api.status[data.code as HttpStatusCode] ||
+              '未知错误';
+            data.code === 401 && persistor.purge(); // persistor.purge() 清除持久化数据
+            message.error(errorText); // 全局提示错误信息
             return Promise.reject(errorText);
           }
         }
@@ -59,7 +72,9 @@ class Request {
       },
       (error) => {
         // 这里处理http状态码错误
-        message.error(`${error.message}, 请检查网络或联系管理员`);
+        
+
+        message.error(`${error.message}, 网络错误`);
         return Promise.reject(error);
       }
     );
@@ -69,15 +84,15 @@ class Request {
    * Get 请求
    * @param url
    * @param config
-   * @returns {DTO.Data} return response.data.Data
+   * @returns {ResponseDto.data} 直接返回数据部分 return response.data.data
    */
   public get<ResData = any>(
     url: string,
     config?: AxiosRequestConfig
   ): Promise<ResData> {
     return this.instance
-      .get<DTO<ResData>>(url, config)
-      .then(({ data }) => data.Data);
+      .get<ResponseDto<ResData>>(url, config)
+      .then(({ data }) => data.data);
   }
 
   /**
@@ -85,7 +100,7 @@ class Request {
    * @param url
    * @param data
    * @param config
-   * @returns {DTO.Data} 直接返回数据部分 return response.data.Data
+   * @returns {ResponseDto.data} 直接返回数据部分 return response.data.data
    */
   public post<Params = any, ResData = any>(
     url: string,
@@ -93,16 +108,49 @@ class Request {
     config?: AxiosRequestConfig
   ): Promise<ResData> {
     return this.instance
-      .post<DTO<ResData>>(url, data, config)
-      .then(({ data }) => data.Data);
+      .post<ResponseDto<ResData>>(url, data, config)
+      .then(({ data }) => data.data);
   }
+
+  /**
+   * Put 请求
+   * @param url
+   * @param data
+   * @param config
+   * @returns {ResponseDto.data} 直接返回数据部分 return response.data.data
+   */
+  public put<Params = any, ResData = any>(
+    url: string,
+    data: Params,
+    config?: AxiosRequestConfig
+  ): Promise<ResData> {
+    return this.instance
+      .put<ResponseDto<ResData>>(url, data, config)
+      .then(({ data }) => data.data);
+  }
+
+  /**
+   * Delete 请求
+   * @param url
+   * @param config
+   * @returns {ResponseDto.data} 直接返回数据部分 return response.data.data
+   * */
+  public delete<ResData = any>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<ResData> {
+    return this.instance
+      .delete<ResponseDto<ResData>>(url, config)
+      .then(({ data }) => data.data);
+  }
+
 
   /**
    * 获取Blob数据
    * @param url
    * @param data
    * @param config
-   * @returns
+   * @returns 
    */
   public getBlob<Params = any>(
     url: string,
@@ -148,7 +196,7 @@ class Request {
    */
   public request<ResData = any>(config: AxiosRequestConfig) {
     return this.instance
-      .request<DTO<ResData>>(config)
+      .request<ResponseDto<ResData>>(config)
       .then((response) => response.data);
   }
 }

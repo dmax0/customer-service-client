@@ -1,11 +1,5 @@
-<p align="center">
-  <a href="https://strivelen.github.io/fine-admin/">
-    <img width="88" src="https://strivelen.github.io/fine-admin/logo128.png">
-  </a>
-</p>
-<h1 align="center">React Fine Admin 🔥 (under development)</h1>
 
-<div align="center">中后台管理系统通用模板</div>
+<div align="center">毕业设计：在线客服系统后台</div>
 
 <div align="center">
 <br />
@@ -20,17 +14,15 @@
 <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/strivelen/fine-admin/total">
 </div>
 
-[在线演示](https://strivelen.github.io/fine-admin/)
-
 ### 📦 快速开始
 
 ```sh
-npx degit github:strivelen/fine-admin my-project
+git clone https://github.com/dmax0/customer-service-client.git
 
-cd my-project
+cd customer-service-client
 
 
-pnpm install
+npm install
 
-pnpm run dev
+npm run dev
 ```

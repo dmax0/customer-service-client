@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, createHashRouter } from 'react-router-dom';
 import {
   generateRoutes,
   getLayoutRoutes,
@@ -8,6 +8,8 @@ import {
 import type { IconType } from '@/components/Icons';
 import config from '@/config';
 import type { MergeExclusive, SetOptional } from 'type-fest';
+import UserList from '@/pages/system/user';
+import Login from '@/pages/login/Login';
 
 type CustomRoute = Omit<BaseMenuItem, 'key' | 'name' | 'icon'> & {
   layoutRender?: false;
@@ -22,7 +24,7 @@ interface BaseMenuItem {
   auth?: true;
   path: string;
   // 页面组件地址，基于pages文件夹下
-  componentPath: string;
+  component: string;
 }
 
 interface NoStateMenuItem extends BaseMenuItem {
@@ -34,7 +36,7 @@ interface NoStateMenuItem extends BaseMenuItem {
 type MenuItemRoute = MergeExclusive<BaseMenuItem, NoStateMenuItem>;
 
 type MenuFoldRoute = SetOptional<
-  Omit<MenuItemRoute, 'componentPath' | 'layoutRender' | 'parentKey' | 'auth'>,
+  Omit<MenuItemRoute, 'component' | 'layoutRender' | 'parentKey' | 'auth'>,
   'path'
 > & {
   children: Array<MergeExclusive<MenuItemRoute, MenuFoldRoute>>;
@@ -48,11 +50,14 @@ const ErrorPage = lazy(() => import('@/components/ErrorBoundary'));
 const Layout = lazy(() => import('@/components/Layout'));
 const NotFound = lazy(() => import('@/pages/404'));
 
-export const layoutRoutesConfig = getLayoutRoutes(config.routes);
-
+// 获取localstroage中的菜单配置
+const user = JSON.parse(localStorage.getItem('persist:user') || '{}');
+const menuItems = user.menuItems ? JSON.parse(user.menuItems) : [];
+export const layoutRoutesConfig = config.isRenderServerMenu ? menuItems : config.routes;
+// console.log("layoutRoutesConfig:", layoutRoutesConfig)
 const noLayoutRoutesConfig = getNoLayoutRoutes(config.routes);
 
-export default createBrowserRouter(
+export default createHashRouter(
   [
     {
       errorElement: <ErrorPage />,
@@ -66,6 +71,13 @@ export default createBrowserRouter(
     {
       path: '*',
       element: <NotFound />
+    },
+    {
+      path: '/',
+      element: <UserList />
+    }, {
+      path: '/login',
+      element: <Login />
     }
   ],
   {

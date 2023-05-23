@@ -7,7 +7,7 @@ export default function Logo() {
         src={`${import.meta.env.BASE_URL}logo64.png`}
       />
       <div style={{ width: !collapsed ? 141 : 0, transition: 'width 0.3s' }}>
-        <h1 className="logo_text">Fine Admin</h1>
+        <h1 className="logo_text">在线客服管理系统</h1>
       </div>
     </div>
   );

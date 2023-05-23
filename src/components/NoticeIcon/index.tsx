@@ -67,7 +67,7 @@ const getUnreadData = (noticeData: Record<string, API.NoticeIconItem[]>) => {
 };
 
 const NoticeIconView: React.FC = () => {
-  const { currentUser } = { currentUser: { unreadCount: 11 } };
+  const { currentUser } = { currentUser: { unreadCount: 1 } };
   const [notices, setNotices] = useState<API.NoticeIconItem[]>(
     getNotices // 在使用时应该是通过API返回的数据
   );

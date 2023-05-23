@@ -50,9 +50,9 @@ export const generateRoutes = function (routes: IRoute[]) {
     let routeItem: RouteObject = {
       path: route.path
     };
-    if (route.componentPath) {
+    if (route.component) {
       const PageComponent = lazy(
-        () => import(/* @vite-ignore */ `../pages/${route.componentPath}`)
+        () => import(/* @vite-ignore */ `../pages/${route.component}`)
       );
       routeItem.element = route.auth ? (
         <RouteAuth>
@@ -65,6 +65,7 @@ export const generateRoutes = function (routes: IRoute[]) {
     if (route.children) {
       routeItem.children = generateRoutes(route.children);
     }
+    // console.log("routeItem:", routeItem)
     return routeItem;
   });
 };

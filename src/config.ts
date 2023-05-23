@@ -3,16 +3,23 @@
  */
 import type { IRoute } from '@/router/routes';
 
+export type MenuItem = {
+  name: string;
+  key: string;
+  path: string;
+  icon?: string;
+  children?: MenuItem[];
+}
 const routes: IRoute[] = [
   {
     path: 'login',
-    componentPath: 'login/Login',
+    component: 'login/Login',
     layoutRender: false
   },
   {
     auth: true,
     path: '/',
-    componentPath: 'dashboard',
+    component: 'dashboard',
     name: 'Dashboard',
     key: '/',
     icon: 'DashboardOutlined'
@@ -26,14 +33,14 @@ const routes: IRoute[] = [
       {
         auth: true,
         path: 'basic-form',
-        componentPath: 'form/basic-form',
+        component: 'form/basic-form',
         name: '基础表单',
         key: 'form/basic-form'
       },
       {
         auth: true,
         path: 'step-form',
-        componentPath: 'form/step-form',
+        component: 'form/step-form',
         name: '分布表单',
         key: 'form/step-form'
       }
@@ -48,14 +55,14 @@ const routes: IRoute[] = [
       {
         auth: true,
         path: 'search',
-        componentPath: 'list/search',
+        component: 'list/search',
         name: '搜索列表',
         key: 'list/search'
       },
       {
         auth: true,
         path: 'table-list',
-        componentPath: 'list/table-list',
+        component: 'list/table-list',
         name: '查询列表',
         key: 'list/table-list'
         // menuRender: false
@@ -71,14 +78,14 @@ const routes: IRoute[] = [
       {
         auth: true,
         path: 'basic',
-        componentPath: 'profile/basic',
+        component: 'profile/basic',
         name: '基础详情页',
         key: 'profile/basic'
       },
       {
         auth: true,
         path: 'advanced',
-        componentPath: 'profile/advanced',
+        component: 'profile/advanced',
         name: '高级详情页',
         key: 'profile/advanced'
       }
@@ -93,14 +100,14 @@ const routes: IRoute[] = [
       {
         auth: true,
         path: 'success',
-        componentPath: 'result/success',
+        component: 'result/success',
         name: '成功页',
         key: 'result/success'
       },
       {
         auth: true,
         path: 'fail',
-        componentPath: 'result/fail',
+        component: 'result/fail',
         name: '失败页',
         key: 'result/fail'
       }
@@ -115,14 +122,14 @@ const routes: IRoute[] = [
       {
         auth: true,
         path: 'my-info',
-        componentPath: 'my-info',
+        component: 'my-info',
         name: '我的信息',
         key: 'setting/my-info'
       },
       {
         auth: true,
         path: 'change-password',
-        componentPath: 'change-password',
+        component: 'change-password',
         name: '修改密码',
         key: 'setting/change-password'
       }
@@ -130,7 +137,7 @@ const routes: IRoute[] = [
   },
   // {
   //   path: 'test',
-  //   componentPath: 'test',
+  //   component: 'test',
   //   menuRender: false,
   //   parentKey: 'result/success'
   // }
@@ -152,7 +159,7 @@ const routes: IRoute[] = [
             children: [
               {
                 path: 'test',
-                componentPath: 'test',
+                component: 'test',
                 name: '四级菜单',
                 key: 'test'
                 // menuRender: false,
@@ -174,9 +181,10 @@ const config = {
   // 请求配置
   api: {
     baseUrl:
-      'https://www.fastmock.site/mock/d6f0134049a0e22b01d7aae6fafc9045/api',
+      // 'http://localhost:8080', // 本地开发环境
+      'https://nxefcm-nqnntx-8080.preview.myide.io',
     timeout: 30000,
-    sessionKey: 'sessionkey',
+    sessionKey: 'Authorization',
     status: {
       // 与后台约定可能返回的状态码（不是http的响应状态码）
       200: '请求成功',
@@ -205,7 +213,7 @@ const config = {
     '#d6a01d'
   ],
   // 路由 & 菜单 & 面包屑 配置
-  isRenderServerMenu: false, // 是否使用服务端菜单数据
+  isRenderServerMenu: true, // 是否使用服务端菜单数据
   routes
 };
 

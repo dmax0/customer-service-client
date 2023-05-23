@@ -22,6 +22,7 @@ export default function LayoutMenu() {
   const navigate = useNavigate();
   const location = useLocation();
   const serverMenuData = useAppSelector(selectMenuItems);
+  
   const menuData = config.isRenderServerMenu
     ? serverMenuData
     : useMemo(() => getMenuData(routes), []);
@@ -129,6 +130,7 @@ const generateMenuItems = (data: IRoute[]): ItemType[] => {
       children
     } as ItemType);
   });
+  
   return menu;
 };
 
